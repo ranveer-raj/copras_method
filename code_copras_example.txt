@@ -1,0 +1,13 @@
+	BENEFICIAL PARAMETERS				NON-BENEFICIAL PARAMETERS			
+								
+Road	No. of villages/ Towns	Tax (Rs)	No. of vehicles (Freight)	No. of vehicles (Passengers)	Cost (in cr.)	Time (in hr)	Pollution	Accidents
+A	8	20	200	500	8	2	100	7
+B	7	25	300	600	10	1.8	95	9
+C	9	20	400	700	7	2.4	80	10
+D	8	45	350	650	6.5	3	75	7
+E	5	30	400	800	8.5	2.7	91	8
+F	6	40	300	900	7.8	1.9	84	5
+G	9	50	250	500	9	2.2	92	9
+								
+Weights	0.15	0.05	0.2	0.25	0.1	0.05	0.15	0.05
+								

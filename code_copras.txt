@@ -1,0 +1,116 @@
+Sub copras_code_vbe()
+
+' Defining variables
+
+Dim S_IDEAL, S_NEGATIVE, R_C As Double
+Dim A, B, rank As Integer
+Dim Q As Double
+Dim I, K, LCOLUMN, LROW, SUM, ben, nonben As Integer
+Dim weight, options, s_min, S1, S2 As Integer
+Dim S As String
+
+' counting the total number of rows and columns in the input
+
+LCOLUMN = Sheets("SHEET1").Cells(3, Columns.Count).End(xlToLeft).Column
+
+LROW = Sheets("SHEET1").Range("A" & Rows.Count).End(xlUp).Row
+
+' Explicitly mention number of beneficial, non-beneficial features and options to choose from.
+
+ben = 4
+
+nonben = 4
+
+options = 7
+
+' Determining "Decision Matrix" and "Normalized Decision Matrix"
+
+Sheets("SHEET1").Cells(I + LROW + 2, 5).Value = Sheets("sheet1").Cells(100, 26).Value
+Sheets("SHEET1").Cells(I + 2 * LROW + 2, 5).Value = Sheets("sheet1").Cells(101, 26).Value
+
+For K = 2 To LCOLUMN
+
+SUM = 0
+weight = Sheets("sheet1").Cells(LROW, K).Value
+
+For I = 4 To (LROW - 2)
+SUM = SUM + Sheets("sheet1").Cells(I, K).Value
+Next I
+
+For I = 4 To (LROW - 2)
+Sheets("SHEET1").Cells(I + LROW, K).Value = (Sheets("sheet1").Cells(I, K).Value) / SUM
+Sheets("SHEET1").Cells(I + 2 * LROW, K).Value = (Sheets("sheet1").Cells(I + LROW, K).Value) * weight
+Next I
+
+Next K
+
+' Now we try to find S+i, S-i, S-min( is s_min) and S1( is summation(S-i)) using the below code
+
+Sheets("SHEET1").Cells(3 * LROW + 2, 2).Value = Sheets("sheet1").Cells(102, 26).Value
+Sheets("SHEET1").Cells(3 * LROW + 2, 2 + ben).Value = Sheets("sheet1").Cells(103, 26).Value
+
+s_min = 99999
+S1 = 0
+
+For I = 2 * LROW + 4 To 2 * LROW + 3 + options
+
+
+SUM = 0
+For K = 2 To 1 + ben
+SUM = SUM + Sheets("sheet1").Cells(I, K).Value
+Next K
+Sheets("SHEET1").Cells(I + LROW, 2).Value = SUM
+
+SUM = 0
+For K = 2 + ben To LCOLUMN
+SUM = SUM + Sheets("sheet1").Cells(I, K).Value
+Next K
+S1 = S1 + SUM
+
+If (s_min > SUM) Then
+s_min = SUM
+End If
+
+Sheets("SHEET1").Cells(I + LROW, 2 + ben).Value = SUM
+
+
+Next I
+
+
+' Printing s_min that was found above.
+
+Sheets("SHEET1").Cells(4 * LROW, 2).Value = Sheets("sheet1").Cells(105, 26).Value
+Sheets("SHEET1").Cells(4 * LROW + 2, 2).Value = s_min
+
+
+' Calculating S2 = summation(s_min/S-i), it will be used in finding Q-values.
+
+S2 = 0
+For I = 3 * LROW + 4 To 3 * LROW + 3 + options
+S2 = S2 + s_min / (Sheets("SHEET1").Cells(I, 2 + ben).Value)
+Next I
+
+
+' Calculating the Q-values for each alternative/option using the standard formula.
+
+Sheets("SHEET1").Cells(4 * LROW + 6, 2).Value = Sheets("sheet1").Cells(106, 26).Value
+
+For I = 3 * LROW + 4 To 3 * LROW + 3 + options
+A = Sheets("SHEET1").Cells(I, 2).Value
+B = Sheets("SHEET1").Cells(I, 2 + ben).Value
+Q = A + ((s_min * S1) / (B * S2))
+Sheets("SHEET1").Cells(I + LROW + 4, 2).Value = Q
+Next I
+
+
+' Determining Ranks for various alternatives/options on the basis of the Corresponding Q-values obtained.
+' For different set of input the numbers need to be changed explicitly.
+
+Sheets("SHEET1").Cells(4 * LROW + 6, 4).Value = Sheets("sheet1").Cells(108, 26).Value
+
+For I = 56 To 62
+rank = WorksheetFunction.rank(Cells(I, 2).Value, Range("B56:B62"), 0)
+Sheets("SHEET1").Cells(I, 4).Value = rank
+Next I
+
+End Sub
